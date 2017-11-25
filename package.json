@@ -2,7 +2,7 @@
   "name": "hyperdb-index-level",
   "description": "A hyperdb-index backed by LevelDB.",
   "author": "Stephen Whitmore <sww@eight.net>",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "repository": {
     "url": "git://github.com/noffle/hyperdb-index-level.git"
   },
