@@ -98,12 +98,7 @@ $ npm install hyperdb-index-level
 
 ## Acknowledgments
 
-hyperdb-index-level was inspired by..
-
-## See Also
-
-- [`noffle/common-readme`](https://github.com/noffle/common-readme)
-- ...
+Development was sponsored by [Digital Democracy](https://digital-democracy.org).
 
 ## License
 
