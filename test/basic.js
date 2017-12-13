@@ -8,12 +8,14 @@ var sub = require('subleveldown')
 test('basic', function (t) {
   var db = hyper(ram, { valueEncoding: 'json' })
   var lvl = memdb()
-  var idx = LevelIndex(db, sub(lvl, 'stuff'), processor)
 
-  t.plan(2)
+  LevelIndex(db, sub(lvl, 'stuff'), processor)
 
-  function processor (ldb, kv, oldKv, next) {
-    t.deepEquals(kv, { key: '/foo', value: ['bar'] })
+  t.plan(3)
+
+  function processor (node, next) {
+    t.equals(node.key, '/foo')
+    t.deepEquals(node.value, 'bar')
     next()
   }
 
@@ -25,12 +27,22 @@ test('basic', function (t) {
 test('only process latest', function (t) {
   var db = hyper(ram, { valueEncoding: 'json' })
   var lvl = memdb()
-  var idx = LevelIndex(db, sub(lvl, 'stuff'), processor)
 
-  t.plan(3)
+  LevelIndex(db, sub(lvl, 'stuff'), processor)
 
-  function processor (ldb, kv, oldKv, next) {
-    t.deepEquals(kv, { key: '/foo', value: ['quux'] })
+  t.plan(6)
+
+  var n = 0
+
+  function processor (node, next) {
+    if (n === 0) {
+      t.equals(node.key, '/foo')
+      t.deepEquals(node.value, 'bar')
+    } else {
+      t.equals(node.key, '/foo')
+      t.deepEquals(node.value, 'quux')
+    }
+    n++
     next()
   }
 
@@ -50,19 +62,14 @@ test('adder', function (t) {
 
   t.plan(5)
 
-  function processor (ldb, kv, oldKv, next) {
+  function processor (node, next) {
     slvl.get('sum', function (err, sum) {
       if (err && !err.notFound) return next(err)
       else if (err) sum = 0
       else sum = Number(sum)
 
-      console.log('sum so far', sum, kv.value)
-      sum += kv.value[0]
-      console.log('writing..', sum)
-      slvl.put('sum', Number(sum), function (err) {
-        console.log('..wrote')
-        next(err)
-      })
+      sum += node.value
+      slvl.put('sum', Number(sum), next)
     })
   }
 

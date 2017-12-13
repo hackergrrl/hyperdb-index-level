@@ -7,25 +7,25 @@ function LevelIndex (hdb, ldb, myProcessFn) {
 
   var idx = hindex(hdb, {
     processFn: processFn,
-    getSnapshot: getSnapshot,
-    setSnapshot: setSnapshot
+    getVersion: getVersion,
+    setVersion: setVersion
   })
 
-  function getSnapshot (cb) {
-    ldb.get('snapshot', function (err, json) {
+  function getVersion (cb) {
+    ldb.get('version', function (err, json) {
       if (err && !err.notFound) cb(err)
       else if (err) cb()
       else cb(null, JSON.parse(json))
     })
   }
 
-  function setSnapshot (snapshot, cb) {
-    var json = JSON.stringify(snapshot)
-    ldb.put('snapshot', json, cb)
+  function setVersion (version, cb) {
+    var json = JSON.stringify(version)
+    ldb.put('version', json, cb)
   }
 
-  function processFn (kv, oldKv, next) {
-    myProcessFn(ldb, kv, oldKv, next)
+  function processFn (node, next) {
+    myProcessFn(node, next)
   }
 
   return idx

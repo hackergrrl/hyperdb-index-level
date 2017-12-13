@@ -17,14 +17,14 @@ var db = hyper(ram, { valueEncoding: 'json' })
 var lvl = level('./index')
 var idx = hindex(db, lvl, processor)
 
-function processor (lvl, kv, oldKv, next) {
+function processor (node, next) {
   lvl.get('sum', function (err, sum) {
     if (err && !err.notFound) return next(err)
     else if (err) sum = 0
     else sum = Number(sum)
 
-    console.log('sum so far', sum, kv.value)
-    sum += kv.value[0]
+    console.log('sum so far', sum, node.value)
+    sum += node.value
     lvl.put('sum', Number(sum), next)
   })
 }
@@ -67,13 +67,12 @@ var hindex = require('hyperdb-index-level')
 
 Creates a new indexer on the hyperdb instance `db`.
 
-The Level instance `lvl` is used for storage. 
+The Level instance `lvl` is used for storage.
 
 `processorFn` is called on the latest value of key that gets set, with the
-function signature `processorFn(lvl, kv, oldKv, next)`. `lvl` is the LevelDB
-instance you passed into `hindex()`, and the other parameters are the same as
-the processor function from
-[hyperdb-index](https://github.com/noffle/hyperdb-index#var-idx--indexdb-opts).
+function signature `processorFn(node, next)`. `node` is the next hyperdb node to
+be processed, and `next` is called with an optional error to tell the indexer to
+proceed.
 
 ### idx.ready(cb)
 

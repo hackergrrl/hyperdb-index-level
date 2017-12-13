@@ -27,13 +27,12 @@ var getSum = function (cb) {
   })
 }
 
-db.put('/numbers/0', 15, function (err) {
-  db.put('/numbers/1', 2, function (err) {
-    db.put('/numbers/2', 8, function (err) {
-      getSum(function (err, sum) {
+db.put('/numbers/0', 15, function () {
+  db.put('/numbers/1', 2, function () {
+    db.put('/numbers/2', 8, function () {
+      getSum(function (_, sum) {
         console.log('the sum is', sum)
       })
     })
   })
 })
-
