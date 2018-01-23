@@ -12,15 +12,15 @@ function LevelIndex (hdb, ldb, myProcessFn) {
   })
 
   function getVersion (cb) {
-    ldb.get('version', function (err, buf) {
+    ldb.get('version', function (err, hex) {
       if (err && !err.notFound) cb(err)
       else if (err) cb()
-      else cb(null, buf)
+      else cb(null, Buffer.from(hex, 'hex'))
     })
   }
 
   function setVersion (version, cb) {
-    ldb.put('version', version, cb)
+    ldb.put('version', version.toString('hex'), cb)
   }
 
   function processFn (node, next) {
